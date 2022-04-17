@@ -5,6 +5,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:zoom_clone/widget/joinmeetingoptions.dart';
 
 class JoinMeeting extends StatefulWidget {
+
   const JoinMeeting({Key? key}) : super(key: key);
 
   @override

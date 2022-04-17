@@ -1,69 +1,136 @@
-import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
-import 'package:zoom_clone/utils/constant.dart';
+import 'dart:ui';
 
-class LoginPage extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import '../resources/signinauth.dart';
+import '../widget/custombutton.dart';
+import '../widget/customtextfield.dart';
+import '../widget/showsnackbar.dart';
+
+class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
   @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _email = TextEditingController();
+  final _password = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
   Widget build(BuildContext context) {
-    double h = MediaQuery.of(context).size.height;
-    double w = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: h * 0.2,
-              child: const Text(
-                'Start or join a meeting',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
+      body: SafeArea(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Expanded(
+                child: SvgPicture.asset('assets/images/signIn_bg.svg'),
               ),
-            ),
-            Lottie.asset(
-              'assets/images/videoc.json',
-              animate: true,
-              width: 300,
-              height: 300,
-            ),
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text(
-                'Join a Meeting',
-              ),
-            ),
-            SizedBox(
-              height: h * 0.05,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                InkWell(
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child: Align(
+                  alignment: Alignment.centerLeft,
                   child: Text(
-                    'Sign Up',
+                    'Login',
                     style: TextStyle(
-                      color: kLightBlueColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 32,
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: 50.0,
+              ),
+              CustomTextField(
+                hintText: 'Email',
+                icon: const Icon(Icons.email),
+                controller: _email,
+                message: 'Please enter email',
+              ),
+              CustomTextField(
+                hintText: 'Password',
+                icon: const Icon(Icons.lock),
+                controller: _password,
+                message: 'Please enter password',
+              ),
+              CustomButton(
+                color: const Color(0xff0165ff),
+                height: 50,
+                width: MediaQuery.of(context).size.width,
+                text: 'Login',
+                onpress: () {
+                  if (_formKey.currentState!.validate()) {
+                    Navigator.pushNamed(context, '/home');
+                  }
+                },
+              ),
+              const Center(
+                child: Text(
+                  'Or, login with...',
+                  style: TextStyle(color: Colors.grey),
                 ),
-                InkWell(
-                  child: Text(
-                    'Sign Up',
-                    style: TextStyle(
-                      color: kLightBlueColor,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  CustomButton(
+                    color: Colors.white,
+                    height: 50,
+                    width: 110,
+                    text: 'Google',
+                    isLogo: true,
+                    onpress: () async {
+                      bool cred = await AuthMethods().signInWithGoogle(context);
+                      if (cred) {
+                        Navigator.pushNamed(context, '/home');
+                      } else {
+                        showSnackBar(context, 'Login Failed!!');
+                      }
+                    },
+                    icon: 'assets/images/icons8-google.svg',
+                  ),
+                  /*CustomButton(
+                    color: Colors.white,
+                    height: 50,
+                    width: 110,
+                    text: 'Facebook',
+                    isLogo: true,
+                    onpress: () async {
+                      bool cred = await AuthMethods().signInWithFacebook();
+                      if (cred) {
+                        Navigator.pushNamed(context, '/home');
+                      } else {
+                        showSnackBar(context, 'Login Failed!!');
+                      }
+                    },
+                    icon: 'assets/images/facebook_svg.svg',
+                  ),*/
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Create New Account?'),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/register');
+                    },
+                    child: const Text(
+                      ' Register',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            )
-          ],
+                ],
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );
